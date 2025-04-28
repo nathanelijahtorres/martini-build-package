@@ -1,0 +1,9 @@
+<package id="com.lonti.sample3" context-path="/sample-package3" version="1.0.0-SNAPSHOT" stateOnStartup="STARTED">
+  <package-dependencies/>
+  <startup-services/>
+  <shutdown-services/>
+  <jms-destinations/>
+  <endpoints/>
+  <spring-contexts/>
+  <solr-cores/>
+</package>

@@ -31,7 +31,9 @@ The repository is organized as follows:
 │       └── deploy.yml            # Deploys Martini packages and validates the API
 ├── conf/                    # Placeholder for configuration files
 ├── packages/                # Martini package source code
-│   └── sample-package/      # Example Martini package
+│   ├── sample-package/          # Example Martini package
+│   ├── sample-package2/         # Second package
+│   └── sample-package3/         # Third package
 ├── .gitignore               # Specifies files to be ignored by Git
 ├── Dockerfile               # Builds a Docker image containing Martini packages
 └── Readme.md                # Documentation
@@ -61,7 +63,7 @@ uses: docker/build-push-action@v6
 with:
   build-args: |
     MARTINI_VERSION=${{ vars.BASE_DOCKER_MARTINI_VERSION }}
-    PACKAGE_DIR=packages/
+    PACKAGE_DIR=${{ vars.PACKAGE_DIR }}
   push: true
   tags: localhost:5000/sample/martini:latest
 ```
@@ -86,7 +88,7 @@ This workflow zips the Martini package and uploads it as an artifact for reuse.
 ```yaml
 uses: actions/upload-artifact@v4
 with:
-  name: sample-package
+  name: sample-package.zip
   path: sample-package.zip
 ```
 
@@ -107,9 +109,9 @@ This workflow uploads a Martini package to a Martini instance and validates its 
 **Secrets and Variables**:
 
 - `MARTINI_BASE_URL`: The base URL of the Martini instance.
-- `MARTINI_CLIENT_ID`: The Client ID of the Martini instance. If omitted, defaults to `TOROMartini`  
-- `MARTINI_CLIENT_SECRET`: The Client Secret of the Martini instance
-- `MARTINI_USER_NAME` and `MARTINI_USER_PASSWORD`: Credentials for authentication.
+- `MARTINI_ACCESS_TOKEN`: The access token for your Martini instance. You can obtain this from the instance directly or via the Lonti Console.
+- `PACKAGE_DIR`: The path to the directory containing package folders.
+- `ALLOWED_PACKAGES`: A comma-separated list of specific package names to upload (e.g., `package2, package3`). If not provided, all packages in the directory will be uploaded.
 
 **Example Configuration**:
 
@@ -117,11 +119,9 @@ This workflow uploads a Martini package to a Martini instance and validates its 
 uses: lontiplatform/martini-build-package@v1
 with:
   base_url: ${{ vars.MARTINI_BASE_URL }}
-  client_id: ${{ secrets.MARTINI_CLIENT_ID }}
-  client_secret: ${{ secrets.MARTINI_CLIENT_SECRET }}
-  user_name: ${{ secrets.MARTINI_USER_NAME }}
-  user_password: ${{ secrets.MARTINI_USER_PASSWORD }}
-  package_dir: packages/sample-package
+  access_token: ${{ secrets.MARTINI_ACCESS_TOKEN }}
+  package_dir: ${{ vars.PACKAGE_DIR }}
+  allowed_packages: ${{ vars.ALLOWED_PACKAGES }}
 ```
 
 ---
@@ -131,13 +131,12 @@ with:
 Before using the workflows, ensure the following:
 
 1. **GitHub Secrets**  
-   - `MARTINI_CLIENT_ID`: Martini Client ID. Defaults to `TOROMartini` if unset.
-   - `MARTINI_CLIENT_SECRET`: Martini Client Secret.
-   - `MARTINI_USER_NAME`: Martini instance username.  
-   - `MARTINI_USER_PASSWORD`: Martini instance password.  
+   - `MARTINI_ACCESS_TOKEN`: Martini Access Token.
 
 2. **GitHub Variables**  
-   - `MARTINI_BASE_URL`: Martini instance base URL.  
+   - `MARTINI_BASE_URL`: Martini instance base URL.
+   - `PACKAGE_DIR`: Package root directory.
+   - `ALLOWED_PACKAGES`: Allowed packages to upload.
    - `BASE_DOCKER_MARTINI_VERSION`: Version of the Martini runtime for Docker builds.
 
 3. **Docker Environment**  

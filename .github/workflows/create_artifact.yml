@@ -9,11 +9,25 @@ jobs:
       - uses: actions/checkout@v4
       - name: Zip the package
         run: |
-          cd packages
-          zip -qr ../sample-package.zip sample-package/*
+          cd "${{ vars.PACKAGE_DIR || 'packages' }}"
+          for dir in */ ; do
+            zip -qr "../${dir%/}.zip" "$dir"
+          done
 
-      - name: Archive production artifacts
+      - name: Upload sample-package
         uses: actions/upload-artifact@v4
         with:
-          name: sample-package
+          name: sample-package.zip
           path: sample-package.zip
+
+      - name: Upload sample-package2
+        uses: actions/upload-artifact@v4
+        with:
+          name: sample-package2.zip
+          path: sample-package2.zip
+
+      - name: Upload sample-package3
+        uses: actions/upload-artifact@v4
+        with:
+          name: sample-package3.zip
+          path: sample-package3.zip

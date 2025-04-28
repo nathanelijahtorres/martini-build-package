@@ -24,6 +24,6 @@ jobs:
         with:
           build-args: |
             MARTINI_VERSION=${{ vars.BASE_DOCKER_MARTINI_VERSION }}
-            PACKAGE_DIR=packages/
+            PACKAGE_DIR=${{ vars.PACKAGE_DIR || 'packages' }}
           push: true
           tags: localhost:5000/sample/martini:latest
