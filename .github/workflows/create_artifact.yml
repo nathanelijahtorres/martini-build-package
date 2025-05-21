@@ -7,27 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Zip the package
-        run: |
-          cd "${{ vars.PACKAGE_DIR || 'packages' }}"
-          for dir in */ ; do
-            zip -qr "../${dir%/}.zip" "$dir"
-          done
-
-      - name: Upload sample-package
+      
+      - name: Upload packages.zip
         uses: actions/upload-artifact@v4
         with:
-          name: sample-package.zip
-          path: sample-package.zip
-
-      - name: Upload sample-package2
-        uses: actions/upload-artifact@v4
-        with:
-          name: sample-package2.zip
-          path: sample-package2.zip
-
-      - name: Upload sample-package3
-        uses: actions/upload-artifact@v4
-        with:
-          name: sample-package3.zip
-          path: sample-package3.zip
+          name: packages
+          path: packages

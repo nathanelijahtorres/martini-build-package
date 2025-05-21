@@ -22,8 +22,5 @@ jobs:
       - name: Build and push to local registry
         uses: docker/build-push-action@v6
         with:
-          build-args: |
-            MARTINI_VERSION=${{ vars.BASE_DOCKER_MARTINI_VERSION }}
-            PACKAGE_DIR=${{ vars.PACKAGE_DIR || 'packages' }}
           push: true
-          tags: localhost:5000/sample/martini:latest
+          tags: localhost:5000/lontiplatform/martini-sample-package:1.0.0

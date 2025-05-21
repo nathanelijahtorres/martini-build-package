@@ -1,7 +1,8 @@
-ARG MARTINI_VERSION
+ARG MARTINI_VERSION=latest
 
-FROM toroio/martini-runtime:${MARTINI_VERSION}
+FROM lontiplatform/martini-server-runtime:${MARTINI_VERSION}
 
-ARG PACKAGE_DIR
+ARG PACKAGE_DIR=packages
 RUN mkdir -p /data/packages
 COPY ${PACKAGE_DIR} /data/packages/
+COPY conf /data/conf/
