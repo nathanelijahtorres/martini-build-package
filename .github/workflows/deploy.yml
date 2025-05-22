@@ -3,27 +3,15 @@ name: Build a package and deploy to a Martini instance
 on: [push]
 
 jobs:
-  deploy_single_package:
-    name: Build and Upload Single Package
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: lontiplatform/martini-build-pipeline-github@v2
-        with:
-          base_url: "https://demo-api.apiexplorer.io"
-          access_token: ${{ secrets.MARTINI_ACCESS_TOKEN }}
-          package_name_pattern: "^sample-package2$"
-
   deploy_multiple_packages:
     name: Build and Upload Multiple Packages
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
-      - uses: lontiplatform/martini-build-pipeline-github@v2
+      - uses: nathanelijahtorres/martini-build-package@Test-outputs
         with:
-          base_url: "https://demo-api.apiexplorer.io"
+          base_url: "https://martini.0xluna.com"
           access_token: ${{ secrets.MARTINI_ACCESS_TOKEN }}
           async_upload: "true"
 
