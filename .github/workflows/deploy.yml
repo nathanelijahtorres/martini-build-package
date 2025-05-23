@@ -9,7 +9,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: nathanelijahtorres/martini-build-package@Test-Outputs
+      - uses: nathanelijahtorres/martini-build-package@Polling-and-Package-Filtering
         with:
           base_url: "https://martini.0xluna.com"
           access_token: ${{ secrets.MARTINI_ACCESS_TOKEN }}
