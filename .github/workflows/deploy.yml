@@ -13,8 +13,13 @@ jobs:
         with:
           base_url: "https://martini.0xluna.com"
           access_token: ${{ secrets.MARTINI_ACCESS_TOKEN }}
+          package_dir: ${{ vars.PACKAGE_DIR }}
+          package_name_pattern: ${{ vars.PACKAGE_NAME_PATTERN }}
+          async_upload: ${{ vars.ASYNC_UPLOAD }}
+          success_check_timeout: ${{ vars.SUCCESS_CHECK_TIMEOUT }}
+          success_check_delay: ${{ vars.SUCCESS_CHECK_DELAY }}
+          success_check_package_name: ${{ vars.SUCCESS_CHECK_PACKAGE_NAME }}
           
-
   execute_api:
     name: Tests the deployed API
     needs: [deploy_multiple_packages]
