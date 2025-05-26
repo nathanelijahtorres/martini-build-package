@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: nathanelijahtorres/martini-build-package@Test-Outputs
         with:
-          base_url: "https://martini.0xluna.com"
+          base_url: ${{ vars.MARTINI_BASE_URL }}"
           access_token: ${{ secrets.MARTINI_ACCESS_TOKEN }}
           package_dir: ${{ vars.PACKAGE_DIR }}
           package_name_pattern: ${{ vars.PACKAGE_NAME_PATTERN }}
