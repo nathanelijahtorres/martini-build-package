@@ -44,12 +44,12 @@
                 "y": 289
             },
             "data": {
-                "name": "For /greeting requests",
+                "name": "For /greeting2 requests",
                 "description": "",
                 "httpMethods": [
                     "GET"
                 ],
-                "urlPath": "/greeting",
+                "urlPath": "/greeting2",
                 "enabled": true
             },
             "width": 372,

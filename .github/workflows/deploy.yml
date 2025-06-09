@@ -3,24 +3,38 @@ name: Build a package and deploy to a Martini instance
 on: [push]
 
 jobs:
-  build_deploy:
-    name: Builds and deploys a package
+  deploy_single_package:
+    name: Build and Upload Single Package
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
-      - uses: lontiplatform/martini-build-package@v1
+      - uses: lontiplatform/martini-build-pipeline-github@v2
         with:
-          base_url: ${{ vars.MARTINI_BASE_URL }}
+          base_url: "https://demo-api.apiexplorer.io"
           access_token: ${{ secrets.MARTINI_ACCESS_TOKEN }}
-          package_dir: ${{ vars.PACKAGE_DIR }}
-          allowed_packages: ${{ vars.ALLOWED_PACKAGES }}
+          package_name_pattern: "^sample-package2$"
+
+  deploy_multiple_packages:
+    name: Build and Upload Multiple Packages
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: lontiplatform/martini-build-pipeline-github@v2
+        with:
+          base_url: "https://demo-api.apiexplorer.io"
+          access_token: ${{ secrets.MARTINI_ACCESS_TOKEN }}
+          async_upload: "true"
 
   execute_api:
     name: Tests the deployed API
-    needs: [build_deploy]
+    needs: [deploy_single_package, deploy_multiple_packages]
     runs-on: ubuntu-latest
 
     steps:
       - name: Execute an HTTP request
-        run: curl -s ${{ vars.MARTINI_BASE_URL }}/api/greeting?name=Neo
+        run: |
+          curl -s ${{ vars.MARTINI_BASE_URL }}/api/greeting?name=Neo
+          curl -s ${{ vars.MARTINI_BASE_URL }}/api/greeting?name=John
+          curl -s ${{ vars.MARTINI_BASE_URL }}/api/greeting?name=Doe

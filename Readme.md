@@ -1,5 +1,5 @@
 
-# Martini Build Pipeline for GitHub
+# Martini Sample Package for Github
 
 This repository provides GitHub Actions workflows to automate CI/CD processes for Martini applications. It streamlines building, packaging, and deploying Martini packages, enabling consistent and efficient delivery to Martini instances.
 
@@ -65,14 +65,14 @@ with:
     MARTINI_VERSION=${{ vars.BASE_DOCKER_MARTINI_VERSION }}
     PACKAGE_DIR=${{ vars.PACKAGE_DIR }}
   push: true
-  tags: localhost:5000/sample/martini:latest
+  tags: <my.container.registry.io>/<my_app>:<my_tag> 
 ```
 
 ---
 
 ### **2. Create Artifacts**
 
-This workflow zips the Martini package and uploads it as an artifact for reuse.
+This workflow zips all Martini packages matching a given name pattern into a single archive file (`packages.zip`), and stores it as an artifact.
 
 - **Trigger**: Runs on `push` events.  
 - **Location**: `.github/workflows/create_artifact.yml`  
@@ -80,16 +80,15 @@ This workflow zips the Martini package and uploads it as an artifact for reuse.
 **Steps:**
 
 1. Checks out the repository.
-2. Zips the contents of the `packages/sample-package` directory.
-3. Uploads the zipped package as an artifact named `sample-package`.
+2. Stores the package directory as an artifact named `packages.zip`.
 
 **Example Configuration**:
 
 ```yaml
 uses: actions/upload-artifact@v4
 with:
-  name: sample-package.zip
-  path: sample-package.zip
+   name: packages
+   path: packages
 ```
 
 ---
@@ -103,44 +102,43 @@ This workflow uploads a Martini package to a Martini instance and validates its 
 
 **Steps:**
 
-1. Uploads the Martini package using the `martini-upload-package-action` GitHub Action.
-2. Tests the deployment by sending an HTTP request to the Martini instance.
+1. Uses the official **Martini Build Pipeline Github** to handle the entire zipping and uploading process.
 
-**Secrets and Variables**:
+2. Reads values from repository variables (`BASE_URL`, `MARTINI_ACCESS_TOKEN`, `PACKAGE_DIR`, `PACKAGE_NAME_PATTERN`, `ASYNC_UPLOAD`, `SUCCESS_CHECK_TIMEOUT`, `SUCCESS_CHECK_DELAY`, `SUCCESS_CHECK_PACKAGE_NAME`).
 
-- `MARTINI_BASE_URL`: The base URL of the Martini instance.
-- `MARTINI_ACCESS_TOKEN`: The access token for your Martini instance. You can obtain this from the instance directly or via the Lonti Console.
-- `PACKAGE_DIR`: The path to the directory containing package folders.
-- `ALLOWED_PACKAGES`: A comma-separated list of specific package names to upload (e.g., `package2, package3`). If not provided, all packages in the directory will be uploaded.
+3. Validates that the `PACKAGE_NAME_PATTERN` is respected, zips the matching packages into a single `packages.zip` file.
+
+4. Uploads the `packages.zip` to the Martini instance, then checks if the deployment was successful using a polling mechanism (if specified).
+
+5. Confirms the deployment is complete—often by hitting a test endpoint or checking for package availability.
 
 **Example Configuration**:
 
 ```yaml
-uses: lontiplatform/martini-build-package@v1
+uses: lontiplatform/martini-build-pipeline-github@v2
 with:
   base_url: ${{ vars.MARTINI_BASE_URL }}
   access_token: ${{ secrets.MARTINI_ACCESS_TOKEN }}
-  package_dir: ${{ vars.PACKAGE_DIR }}
-  allowed_packages: ${{ vars.ALLOWED_PACKAGES }}
 ```
 
 ---
 
-## Prerequisites
+### Github Variables
 
-Before using the workflows, ensure the following:
+Set the following Variables in Github. You can do this by accessing Actions Secrets and Variables.
 
-1. **GitHub Secrets**  
-   - `MARTINI_ACCESS_TOKEN`: Martini Access Token.
+| Variable                  | Required | Usage                                                                                                                  |
+|---------------------------|----------|------------------------------------------------------------------------------------------------------------------------|
+| base_url                  | Yes      | Base URL of the Martini instance                                                                                       |
+| access_token              | Yes      | The user's access token, obtainable via Martini or through the Lonti Console                                           |
+| package_dir               | No       | Root directory containing packages (defaults to `packages` if not specified)                                           |
+| package_name_pattern      | No       | Regex pattern to filter which package directories to include. Defaults to `.*` (all directories).                      |
+| async_upload              | No       | If set to `true`, tolerates HTTP 504 as a success (used when uploads are handled asynchronously). Defaults to `false`. |
+| success_check_timeout     | No       | Number of polling attempts before timing out when checking package deployment status. Defaults to `6`.                 |
+| success_check_delay       | No       | Number of seconds between polling attempts. Defaults to `30`.                                                          |
+| success_check_package_name| No       | If set, only this specific package is polled after upload. If unset, all matched packages are polled.                  |
 
-2. **GitHub Variables**  
-   - `MARTINI_BASE_URL`: Martini instance base URL.
-   - `PACKAGE_DIR`: Package root directory.
-   - `ALLOWED_PACKAGES`: Allowed packages to upload.
-   - `BASE_DOCKER_MARTINI_VERSION`: Version of the Martini runtime for Docker builds.
-
-3. **Docker Environment**  
-   A local or remote Docker registry must be set up for building and pushing images.
+You would also need to set `MARTINI_VERSION` as a Repository Variable to set the version of [Martini Server Runtime](https://hub.docker.com/r/lontiplatform/martini-server-runtime) for Docker Builds.
 
 ---
 
@@ -148,4 +146,4 @@ Before using the workflows, ensure the following:
 
 - [Martini Documentation](https://developer.lonti.com/docs/martini)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
-- [Martini Upload Package Action](https://github.com/lontiplatform/martini-build-package)
+- [Martini Build Pipeline Github](https://github.com/lontiplatform/martini-build-pipeline-github)
