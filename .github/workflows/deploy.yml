@@ -9,7 +9,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: lontiplatform/martini-build-pipeline-github@v2
+      - uses: nathanelijahtorres/martini-build-pipeline-github@main
         with:
           base_url: "https://demo-api.apiexplorer.io"
           access_token: ${{ secrets.MARTINI_ACCESS_TOKEN }}
