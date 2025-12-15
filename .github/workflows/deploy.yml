@@ -16,7 +16,7 @@ jobs:
 
   execute_api:
     name: Tests the deployed API
-    needs: [deploy_single_package, deploy_multiple_packages]
+    needs: [deploy_single_package]
     runs-on: ubuntu-latest
 
     steps:
